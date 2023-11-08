@@ -18,7 +18,7 @@ public class UserTodoQuiz {
     private Long userTodoQuizId;
 
     @Column
-    private Boolean completed;
+    private int stage;
 
     @Column
     private String previousAnswer;
@@ -38,4 +38,11 @@ public class UserTodoQuiz {
     @JoinColumn(name = "user_todo_list_id", nullable = false)
     @JsonBackReference
     private UserTodoList userTodoList;
+
+    @ManyToOne
+    @JoinColumn(name = "users_id", nullable = false)
+    @JsonBackReference
+    private Users users;
 }
+
+

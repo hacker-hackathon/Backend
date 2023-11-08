@@ -21,6 +21,9 @@ public class UserTodoList {
     @JsonBackReference
     private Users users;
 
+    @Column
+    private String name;
+
     @ManyToOne
     @JoinColumn(name = "todo_list", nullable = false)
     @JsonBackReference

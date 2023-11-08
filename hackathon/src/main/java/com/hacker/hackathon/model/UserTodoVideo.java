@@ -18,7 +18,7 @@ public class UserTodoVideo {
     private Long userTodoVideoId;
 
     @Column
-    private Boolean completed;
+    private int stage;
 
     @Column
     private Date completeAt;
@@ -35,6 +35,11 @@ public class UserTodoVideo {
     @JoinColumn(name = "user_todo_list_id", nullable = false)
     @JsonBackReference
     private UserTodoList userTodoList;
+
+    @ManyToOne
+    @JoinColumn(name = "users_id", nullable = false)
+    @JsonBackReference
+    private Users users;
 
 
 }

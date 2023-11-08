@@ -18,6 +18,10 @@ public class TodoList {
     @Column(name="todo_list_id")
     private Long todoListId;
 
+    @Column
+    private String name;
+
+
     @OneToMany(mappedBy = "todoList", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<UserTodoList> userTodoLists = new HashSet<>();

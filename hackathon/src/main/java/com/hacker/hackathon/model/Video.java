@@ -19,13 +19,17 @@ public class Video {
     private Long videoId;
 
     @Column
+    private String link;
+
+    @Column
     private String title;
 
     @Column
     private String creator;
 
     @Column
-    private String thumbnail;
+    private Long duration;
+
 
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
@@ -34,4 +38,8 @@ public class Video {
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<Transcript> transcripts = new HashSet<>();
+
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Set<Quiz> quizzes = new HashSet<>();
 }
