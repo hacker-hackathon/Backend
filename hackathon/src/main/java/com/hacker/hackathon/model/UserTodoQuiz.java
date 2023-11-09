@@ -24,9 +24,11 @@ public class UserTodoQuiz {
     private Boolean previousAnswer;
 
     @Column
+    @Temporal(TemporalType.TIMESTAMP)
     private Date completeAt;
 
     @Column
+    @Temporal(TemporalType.TIMESTAMP)
     private Date completedAt;
 
     @ManyToOne

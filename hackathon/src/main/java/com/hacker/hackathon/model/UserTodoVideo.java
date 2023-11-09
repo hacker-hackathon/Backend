@@ -21,9 +21,11 @@ public class UserTodoVideo {
     private Long stage;
 
     @Column
+    @Temporal(TemporalType.TIMESTAMP)
     private Date completeAt;
 
     @Column
+    @Temporal(TemporalType.TIMESTAMP)
     private Date completedAt;
 
     @ManyToOne
