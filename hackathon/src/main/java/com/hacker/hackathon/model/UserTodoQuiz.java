@@ -21,7 +21,7 @@ public class UserTodoQuiz {
     private Long stage;
 
     @Column
-    private String previousAnswer;
+    private Boolean previousAnswer;
 
     @Column
     private Date completeAt;
