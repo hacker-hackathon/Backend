@@ -24,6 +24,9 @@ public class UserTodoList {
     @Column
     private String name;
 
+    @Column(length = 1000)
+    private String description;
+
     @ManyToOne
     @JoinColumn(name = "todo_list", nullable = false)
     @JsonBackReference
@@ -33,4 +36,9 @@ public class UserTodoList {
     @JoinColumn(name = "user_todo_quiz", nullable = false)
     @JsonBackReference
     private UserTodoQuiz userTodoQuiz;
+
+    @ManyToOne
+    @JoinColumn(name = "user_todo_video", nullable = false)
+    @JsonBackReference
+    private UserTodoVideo userTodoVideo;
 }

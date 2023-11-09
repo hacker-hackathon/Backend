@@ -18,7 +18,7 @@ public class UserTodoQuiz {
     private Long userTodoQuizId;
 
     @Column
-    private int stage;
+    private Long stage;
 
     @Column
     private String previousAnswer;

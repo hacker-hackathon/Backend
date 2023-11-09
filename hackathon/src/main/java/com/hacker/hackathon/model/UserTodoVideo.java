@@ -18,7 +18,7 @@ public class UserTodoVideo {
     private Long userTodoVideoId;
 
     @Column
-    private int stage;
+    private Long stage;
 
     @Column
     private Date completeAt;

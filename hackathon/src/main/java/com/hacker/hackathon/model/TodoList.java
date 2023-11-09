@@ -21,6 +21,8 @@ public class TodoList {
     @Column
     private String name;
 
+    @Column(length = 1000)
+    private String description;
 
     @OneToMany(mappedBy = "todoList", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
