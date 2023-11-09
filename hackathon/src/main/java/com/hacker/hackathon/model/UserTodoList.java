@@ -31,6 +31,8 @@ public class UserTodoList {
     @Column(length = 1000)
     private String description;
 
+    @Column
+    private Long progress;
     @ManyToOne
     @JoinColumn(name = "todo_list_id", nullable = false)
     @JsonBackReference
