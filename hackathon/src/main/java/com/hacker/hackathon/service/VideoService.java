@@ -60,7 +60,7 @@ public class VideoService {
     }
 
     public ApiResponse<VideoViewDTO> viewVideo(Long userId, Long videoId){
-        if(!videoRepository.existsById(videoId)){
+        if(!userTodoVideoRepository.existsById(videoId)){
             return ApiResponse.error(ErrorMessage.VIDEO_NOT_FOUND, "영상이 존재하지 않습니다");
         }
         if(!usersRepository.existsById(userId)){
@@ -70,12 +70,12 @@ public class VideoService {
         VideoViewDTO videoViewDTO = new VideoViewDTO();
         if(!userVideoRepository.existsByVideo_VideoIdAndUsers_UsersId(videoId, userId)){
             UserVideo userVideo = new UserVideo();
-            userVideo.setVideo(videoRepository.findById(videoId).get());
+            userVideo.setVideo((userTodoVideoRepository.findById(videoId).get().getVideo()));
             userVideo.setUsers(usersRepository.findById(userId).get());
             userVideoRepository.save(userVideo);
         }
-        if(userTodoVideoRepository.existsByVideo_VideoIdAndUsers_UsersId(videoId, userId)){
-            UserTodoVideo userTodoVideo = userTodoVideoRepository.findByVideo_VideoIdAndUsers_UsersId(videoId, userId);
+        if(userTodoVideoRepository.existsById(videoId)){
+            UserTodoVideo userTodoVideo = userTodoVideoRepository.findById(videoId).get();
             userTodoVideo.setStage(4L);
             userTodoVideo.setCompletedAt(new Date());
             userTodoVideoRepository.save(userTodoVideo);
@@ -85,9 +85,9 @@ public class VideoService {
     }
 
     public ApiResponse<UserTodoVideo> getVideoByUserId(Long userId, Long videoId){
-        if(!userTodoVideoRepository.existsByVideo_VideoIdAndUsers_UsersId(videoId, userId)){
+        if(!userTodoVideoRepository.existsById(videoId)){
             return ApiResponse.error(ErrorMessage.VIDEO_NOT_FOUND, "유저가 시청해야 할 동영상이 존재하지 않습니다.");
         }
-        return ApiResponse.success(SuccessMessage.FIND_VIDEO_SUCCESS,userTodoVideoRepository.findByVideo_VideoIdAndUsers_UsersId(videoId, userId));
+        return ApiResponse.success(SuccessMessage.FIND_VIDEO_SUCCESS,userTodoVideoRepository.findById(videoId).get());
     }
 }
