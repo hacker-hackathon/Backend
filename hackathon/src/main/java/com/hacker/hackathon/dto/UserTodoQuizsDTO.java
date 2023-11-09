@@ -9,9 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserTodoListDTO {
-    private Long listId;
-    private String name;
-    private String description;
-    private Long progress;
+public class UserTodoQuizsDTO {
+    private Long quizId;
+    private Long userQuizId;
 }

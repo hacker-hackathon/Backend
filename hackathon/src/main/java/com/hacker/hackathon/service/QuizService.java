@@ -93,7 +93,7 @@ public class QuizService {
     }
 
     public ApiResponse<UserTodoQuizDTO> getQuizByUserIdAndQuizId(Long userId, Long quizId){
-        Optional<UserTodoQuiz> userTodoQuizOptional = userTodoQuizRepository.findByQuiz_QuizIdAndUsers_UsersId(quizId, userId);
+        Optional<UserTodoQuiz> userTodoQuizOptional = userTodoQuizRepository.findById(quizId);
 
         if (userTodoQuizOptional.isPresent()) {
             UserTodoQuiz userTodoQuiz = userTodoQuizOptional.get();
