@@ -90,7 +90,7 @@ public enum SuccessMessage {
     TODO_LIST_GET_BY_ID_SUCCESS(OK,"투두리스트 개별 반환 성공."),
 
     USER_TODO_LIST_UPDATE_SUCCESS(OK, "유저별 투두리스트 업데이트 성공"),
-
+    MAKE_NEW_USER_TODO_LIST_SUCCESS(OK,"유저 투두리스트 생성 성공"),
     TODO_LIST_DELETE_SUCCESS(OK,"유저별 투두리스트 삭제 성공");
     private final HttpStatus httpStatus;
     private final String message;
