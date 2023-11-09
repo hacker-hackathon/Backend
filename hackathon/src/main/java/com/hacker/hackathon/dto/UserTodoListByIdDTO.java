@@ -5,12 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TodoListDTO {
-    private Long listId;
+public class UserTodoListByIdDTO {
+    private Long userTodoListId;
     private String name;
     private String description;
+    private List<UserTodoVideoDTO> userTodoVideos;
+    private List<UserTodoQuizDTO> userTodoQuizzes;
 }
