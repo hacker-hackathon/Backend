@@ -18,15 +18,17 @@ public class UserTodoQuiz {
     private Long userTodoQuizId;
 
     @Column
-    private Boolean completed;
+    private Long stage;
 
     @Column
-    private String previousAnswer;
+    private Boolean previousAnswer;
 
     @Column
+    @Temporal(TemporalType.TIMESTAMP)
     private Date completeAt;
 
     @Column
+    @Temporal(TemporalType.TIMESTAMP)
     private Date completedAt;
 
     @ManyToOne
@@ -38,4 +40,11 @@ public class UserTodoQuiz {
     @JoinColumn(name = "user_todo_list_id", nullable = false)
     @JsonBackReference
     private UserTodoList userTodoList;
+
+    @ManyToOne
+    @JoinColumn(name = "users_id", nullable = false)
+    @JsonBackReference
+    private Users users;
 }
+
+

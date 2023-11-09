@@ -18,12 +18,14 @@ public class UserTodoVideo {
     private Long userTodoVideoId;
 
     @Column
-    private Boolean completed;
+    private Long stage;
 
     @Column
+    @Temporal(TemporalType.TIMESTAMP)
     private Date completeAt;
 
     @Column
+    @Temporal(TemporalType.TIMESTAMP)
     private Date completedAt;
 
     @ManyToOne
@@ -35,6 +37,11 @@ public class UserTodoVideo {
     @JoinColumn(name = "user_todo_list_id", nullable = false)
     @JsonBackReference
     private UserTodoList userTodoList;
+
+    @ManyToOne
+    @JoinColumn(name = "users_id", nullable = false)
+    @JsonBackReference
+    private Users users;
 
 
 }

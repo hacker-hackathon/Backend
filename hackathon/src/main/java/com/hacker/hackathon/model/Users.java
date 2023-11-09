@@ -26,4 +26,12 @@ public class Users {
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<UserTodoList> userTodoLists = new HashSet<>();
+
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Set<UserTodoQuiz> userTodoQuizzes = new HashSet<>();
+
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Set<UserTodoVideo> userTodoVideos = new HashSet<>();
 }

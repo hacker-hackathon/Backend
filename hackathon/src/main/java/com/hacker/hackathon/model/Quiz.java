@@ -23,7 +23,7 @@ public class Quiz {
     private String question;
 
     @Column
-    private String answer;
+    private Boolean answer;
 
 
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -33,4 +33,9 @@ public class Quiz {
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<UserTodoQuiz> userTodoQuizzes = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "video_id", nullable = false)
+    @JsonBackReference
+    private Video video;
 }

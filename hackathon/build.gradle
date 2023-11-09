@@ -25,6 +25,13 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'mysql:mysql-connector-java:8.0.33'
     implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+
+    //javax
+    compileOnly 'javax.servlet:javax.servlet-api:3.0.1'
+
+    //webmvc
+    // Http
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {
