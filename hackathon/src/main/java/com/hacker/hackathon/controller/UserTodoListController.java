@@ -1,10 +1,7 @@
 package com.hacker.hackathon.controller;
 
 import com.hacker.hackathon.common.response.ApiResponse;
-import com.hacker.hackathon.dto.TodoListDeleteDTO;
-import com.hacker.hackathon.dto.UserTodoListByIdDTO;
-import com.hacker.hackathon.dto.UserTodoListDTO;
-import com.hacker.hackathon.dto.TodoListUpdateDTO;
+import com.hacker.hackathon.dto.*;
 import com.hacker.hackathon.model.UserTodoList;
 import com.hacker.hackathon.service.UserTodoListService;
 import org.springframework.web.bind.annotation.*;
@@ -40,5 +37,8 @@ public class UserTodoListController {
         return userTodoListService.deleteTodoList(userId, listId);
     }
 
-
+    @PostMapping("/user/{userId}/list/{listId}")
+    public ApiResponse<NewUserTodoListDTO> newTodoList(@PathVariable Long userId, @PathVariable Long listId){
+        return userTodoListService.newTodoList(userId, listId);
+    }
 }
