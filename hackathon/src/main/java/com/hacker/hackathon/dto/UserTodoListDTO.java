@@ -13,4 +13,5 @@ public class UserTodoListDTO {
     private Long listId;
     private String name;
     private String description;
+    private Long progress;
 }
