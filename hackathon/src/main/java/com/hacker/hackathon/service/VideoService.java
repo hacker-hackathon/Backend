@@ -74,7 +74,7 @@ public class VideoService {
         }
         if(userTodoVideoRepository.existsByVideo_VideoIdAndUsers_UsersId(videoId, userId)){
             UserTodoVideo userTodoVideo = userTodoVideoRepository.findByVideo_VideoIdAndUsers_UsersId(videoId, userId);
-            userTodoVideo.setStage(3);
+            userTodoVideo.setStage(3L);
             userTodoVideoRepository.save(userTodoVideo);
         }
         videoViewDTO.setMessage("영상 보기를 완료했습니다.");
