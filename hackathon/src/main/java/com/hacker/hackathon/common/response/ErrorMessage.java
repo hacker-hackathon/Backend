@@ -58,6 +58,16 @@ public enum ErrorMessage {
     OPENAI_FAILURE(OK, "OpenAI response 가져오기 실패"),
 
     /**
+     * quiz
+     */
+
+    NOT_FOUND_QUIZ_EXCEPTION(NOT_FOUND, "퀴즈가 존재하지 않습니다"),
+
+    /**
+     * todolist
+     */
+    NOT_FOUND_LIST_EXCEPTION(NOT_FOUND, "리스트가 존재하지 않습니다"),
+    /**
      * translation
      */
     TRANSLATIONS_NOT_FOUND(NOT_FOUND, "translation 가져오기 실패");
