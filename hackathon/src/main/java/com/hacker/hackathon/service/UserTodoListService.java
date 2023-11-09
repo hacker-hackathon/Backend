@@ -4,16 +4,16 @@ import com.hacker.hackathon.common.response.ApiResponse;
 import com.hacker.hackathon.common.response.ErrorMessage;
 import com.hacker.hackathon.common.response.SuccessMessage;
 import com.hacker.hackathon.dto.*;
-import com.hacker.hackathon.model.UserTodoList;
-import com.hacker.hackathon.model.UserTodoQuiz;
-import com.hacker.hackathon.model.UserTodoVideo;
-import com.hacker.hackathon.repository.UserTodoListRepository;
-import com.hacker.hackathon.repository.UserTodoQuizRepository;
-import com.hacker.hackathon.repository.UserTodoVideoRepository;
+import com.hacker.hackathon.model.*;
+import com.hacker.hackathon.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,20 +21,36 @@ public class UserTodoListService {
     private final UserTodoListRepository userTodoListRepository;
     private final UserTodoVideoRepository userTodoVideoRepository;
     private final UserTodoQuizRepository userTodoQuizRepository;
+    private final UsersRepository usersRepository;
+    private final TodoListRepository todoListRepository;
 
     public UserTodoListService(UserTodoListRepository userTodoListRepository,
-                               UserTodoVideoRepository userTodoVideoRepository, UserTodoQuizRepository userTodoQuizRepository) {
+                               UserTodoVideoRepository userTodoVideoRepository, UserTodoQuizRepository userTodoQuizRepository, UsersRepository usersRepository, TodoListRepository todoListRepository) {
         this.userTodoListRepository = userTodoListRepository;
         this.userTodoVideoRepository = userTodoVideoRepository;
         this.userTodoQuizRepository = userTodoQuizRepository;
+        this.usersRepository = usersRepository;
+        this.todoListRepository = todoListRepository;
     }
 
-    public ApiResponse<List<UserTodoListDTO>> getTodoListByUser(Long userId){
+    public ApiResponse<List<UserTodoListDTO>> getTodoListByUser(Long userId) {
         List<UserTodoList> userTodoLists = userTodoListRepository.findByUsers_UsersId(userId);
-        List<UserTodoListDTO> userUserTodoListDTOS = userTodoLists.stream()
-                .map(userTodoList -> new UserTodoListDTO(userTodoList.getUserTodoListId(), userTodoList.getName(), userTodoList.getDescription()))
+        List<UserTodoListDTO> userTodoListDTOs = userTodoLists.stream()
+                .map(userTodoList -> {
+                    long completedCount = userTodoList.getUserTodoVideos().stream()
+                            .filter(userTodoVideo -> userTodoVideo.getStage() == 4)
+                            .count();
+                    double progress = (double) completedCount*100 / userTodoList.getUserTodoVideos().size();
+                    long roundedProgress = Math.round(progress);
+                    return new UserTodoListDTO(
+                            userTodoList.getUserTodoListId(),
+                            userTodoList.getName(),
+                            userTodoList.getDescription(),
+                            roundedProgress
+                    );
+                })
                 .collect(Collectors.toList());
-        return ApiResponse.success(SuccessMessage.USER_TODO_LIST_GET_SUCCESS, userUserTodoListDTOS);
+        return ApiResponse.success(SuccessMessage.USER_TODO_LIST_GET_SUCCESS, userTodoListDTOs);
     }
 
     public ApiResponse<UserTodoListByIdDTO> getTodoList(Long userId, Long listId) {
@@ -49,19 +65,27 @@ public class UserTodoListService {
         dto.setUserTodoListId(userTodoList.getUserTodoListId());
         dto.setName(userTodoList.getName());
         dto.setDescription(userTodoList.getDescription());
-
+        AtomicReference<Long> completed = new AtomicReference<>(0L);
         List<UserTodoVideoDTO> userTodoVideoDTOs = userTodoList.getUserTodoVideos().stream()
                 .map(utv -> {
                     UserTodoVideoDTO videoDTO = new UserTodoVideoDTO();
                     videoDTO.setUserTodoVideoId(utv.getUserTodoVideoId());
                     videoDTO.setStage(utv.getStage());
+                    if(utv.getStage()==4L){
+                        completed.getAndSet(completed.get() + 1);
+                    }
                     videoDTO.setCompleteAt(utv.getCompleteAt());
                     videoDTO.setCompletedAt(utv.getCompletedAt());
                     videoDTO.setVideoId(utv.getVideo().getVideoId());
                     return videoDTO;
                 }).collect(Collectors.toList());
         dto.setUserTodoVideos(userTodoVideoDTOs);
-
+        Long completedValue = completed.get();
+        double result = (double) completedValue*100 / userTodoVideoDTOs.size();
+        Long roundedResult = Math.round(result);
+        dto.setProgress(roundedResult);
+        userTodoList.setProgress(roundedResult);
+        userTodoListRepository.save(userTodoList);
         List<UserTodoQuizDTO> userTodoQuizDTOs = userTodoList.getUserTodoQuizzes().stream()
                 .map(utq -> {
                     UserTodoQuizDTO quizDTO = new UserTodoQuizDTO();
@@ -111,4 +135,67 @@ public class UserTodoListService {
         TodoListDeleteDTO todoListDeleteDTO = new TodoListDeleteDTO("리스트 삭제에 성공했습니다.");
         return ApiResponse.success(SuccessMessage.TODO_LIST_DELETE_SUCCESS,todoListDeleteDTO);
     }
+
+    @Transactional
+    public ApiResponse<NewUserTodoListDTO> newTodoList(Long userId, Long listId) {
+
+        Optional<TodoList> defaultTodoListOpt = todoListRepository.findById(listId);
+        if (!defaultTodoListOpt.isPresent()) {
+            return ApiResponse.error(ErrorMessage.NOT_FOUND_LIST_EXCEPTION);
+        }
+        TodoList defaultTodoList = defaultTodoListOpt.get();
+
+        Optional<Users> userOpt = usersRepository.findById(userId);
+        if (!userOpt.isPresent()) {
+            return ApiResponse.error(ErrorMessage.NOT_FOUND_USER_EXCEPTION);
+        }
+        Users user = userOpt.get();
+
+        UserTodoList newUserTodoList = new UserTodoList();
+        newUserTodoList.setUsers(user);
+        newUserTodoList.setName(defaultTodoList.getName());
+        newUserTodoList.setDescription(defaultTodoList.getDescription());
+        newUserTodoList.setProgress(0L);
+        newUserTodoList.setTodoList(defaultTodoList);
+        newUserTodoList = userTodoListRepository.save(newUserTodoList);
+
+
+        Set<UserTodoVideosDTO> userTodoVideosDTOs = new HashSet<>();
+        Set<UserTodoQuizsDTO> userTodoQuizsDTOs = new HashSet<>();
+
+        UserTodoList finalNewUserTodoList = newUserTodoList;
+        defaultTodoList.getTodoVideos().forEach(todoVideo -> {
+            UserTodoVideo userTodoVideo = new UserTodoVideo();
+            userTodoVideo.setVideo(todoVideo.getVideo());
+            userTodoVideo.setUserTodoList(finalNewUserTodoList);
+            userTodoVideo.setUsers(user);
+            userTodoVideo.setStage(1L);
+            userTodoVideo = userTodoVideoRepository.save(userTodoVideo);
+            userTodoVideosDTOs.add(new UserTodoVideosDTO(todoVideo.getVideo().getVideoId(), userTodoVideo.getUserTodoVideoId()));
+        });
+
+        UserTodoList finalNewUserTodoList1 = newUserTodoList;
+        defaultTodoList.getTodoQuizzes().forEach(todoQuiz -> {
+            UserTodoQuiz userTodoQuiz = new UserTodoQuiz();
+            userTodoQuiz.setQuiz(todoQuiz.getQuiz());
+            userTodoQuiz.setUserTodoList(finalNewUserTodoList1);
+            userTodoQuiz.setUsers(user);
+            userTodoQuiz.setStage(1L);
+            userTodoQuiz = userTodoQuizRepository.save(userTodoQuiz);
+            userTodoQuizsDTOs.add(new UserTodoQuizsDTO(todoQuiz.getQuiz().getQuizId(), userTodoQuiz.getUserTodoQuizId()));
+        });
+
+        NewUserTodoListDTO newUserTodoListDTO = new NewUserTodoListDTO(
+                newUserTodoList.getUserTodoListId(),
+                listId,
+                userId,
+                newUserTodoList.getName(),
+                newUserTodoList.getDescription(),
+                userTodoVideosDTOs,
+                userTodoQuizsDTOs
+        );
+
+        return ApiResponse.success(SuccessMessage.MAKE_NEW_USER_TODO_LIST_SUCCESS, newUserTodoListDTO);
+    }
+
 }
