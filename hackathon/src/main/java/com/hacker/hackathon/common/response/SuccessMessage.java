@@ -74,13 +74,24 @@ public enum SuccessMessage {
     LEADERBOARD_SUCCESS(OK, "리더보드 가져오기 성공."),
     GET_TRANSLATIONS_SUCCESS(OK, "translation 가져오기 성공" ),
 
+
+    /**
+     * quiz
+     */
+    GET_QUIZ_SUCCESS(OK,"퀴즈 가져오기 성공"),
+    QUIZ_SOLVE_SUCCESS(OK,"퀴즈 풀이를 성공했습니다, 맞았는지 틀린지는 메시지 보셈"),
     /**
      * todolist
      */
 
     USER_TODO_LIST_GET_SUCCESS(OK, "유저별 투두리스트 가져오기 성공"),
+    TODO_LIST_GET_SUCCESS(OK,"투두리스트 전체 반환 성공."),
 
-    USER_TODO_LIST_UPDATE_SUCCESS(OK, "유저별 투두리스트 업데이트 성공");
+    TODO_LIST_GET_BY_ID_SUCCESS(OK,"투두리스트 개별 반환 성공."),
+
+    USER_TODO_LIST_UPDATE_SUCCESS(OK, "유저별 투두리스트 업데이트 성공"),
+
+    TODO_LIST_DELETE_SUCCESS(OK,"유저별 투두리스트 삭제 성공");
     private final HttpStatus httpStatus;
     private final String message;
 
