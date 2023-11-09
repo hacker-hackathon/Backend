@@ -17,6 +17,6 @@ public class TodoListAllDTO {
     private Long todoListId;
     private String name;
     private String description;
-    private Set<TodoVideo> todoVideos;
-    private Set<TodoQuiz> todoQuizzes;
+    private Set<Long> todoVideos;
+    private Set<Long> todoQuizzes;
 }
