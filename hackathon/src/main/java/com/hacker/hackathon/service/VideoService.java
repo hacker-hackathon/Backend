@@ -14,6 +14,8 @@ import com.hacker.hackathon.repository.VideoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 public class VideoService {
     private final VideoRepository videoRepository;
@@ -74,10 +76,18 @@ public class VideoService {
         }
         if(userTodoVideoRepository.existsByVideo_VideoIdAndUsers_UsersId(videoId, userId)){
             UserTodoVideo userTodoVideo = userTodoVideoRepository.findByVideo_VideoIdAndUsers_UsersId(videoId, userId);
-            userTodoVideo.setStage(3L);
+            userTodoVideo.setStage(4L);
+            userTodoVideo.setCompletedAt(new Date());
             userTodoVideoRepository.save(userTodoVideo);
         }
         videoViewDTO.setMessage("영상 보기를 완료했습니다.");
         return ApiResponse.success(SuccessMessage.VIDEO_VIEW_DONE, videoViewDTO);
+    }
+
+    public ApiResponse<UserTodoVideo> getVideoByUserId(Long userId, Long videoId){
+        if(!userTodoVideoRepository.existsByVideo_VideoIdAndUsers_UsersId(videoId, userId)){
+            return ApiResponse.error(ErrorMessage.VIDEO_NOT_FOUND, "유저가 시청해야 할 동영상이 존재하지 않습니다.");
+        }
+        return ApiResponse.success(SuccessMessage.FIND_VIDEO_SUCCESS,userTodoVideoRepository.findByVideo_VideoIdAndUsers_UsersId(videoId, userId));
     }
 }
