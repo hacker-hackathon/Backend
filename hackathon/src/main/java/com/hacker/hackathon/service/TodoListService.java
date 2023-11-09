@@ -1,68 +1,49 @@
 package com.hacker.hackathon.service;
 
 import com.hacker.hackathon.common.response.ApiResponse;
-import com.hacker.hackathon.common.response.ErrorMessage;
 import com.hacker.hackathon.common.response.SuccessMessage;
-import com.hacker.hackathon.dto.TodoListDTO;
-import com.hacker.hackathon.dto.TodoListUpdateDTO;
-import com.hacker.hackathon.model.UserTodoList;
-import com.hacker.hackathon.model.UserTodoQuiz;
-import com.hacker.hackathon.model.UserTodoVideo;
-import com.hacker.hackathon.repository.UserTodoListRepository;
-import com.hacker.hackathon.repository.UserTodoQuizRepository;
-import com.hacker.hackathon.repository.UserTodoVideoRepository;
+import com.hacker.hackathon.dto.TodoListAllDTO;
+import com.hacker.hackathon.model.TodoList;
+import com.hacker.hackathon.repository.TodoListRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class TodoListService {
-    private final UserTodoListRepository userTodoListRepository;
-    private final UserTodoVideoRepository userTodoVideoRepository;
-    private final UserTodoQuizRepository userTodoQuizRepository;
+    private final TodoListRepository todoListRepository;
 
-    public TodoListService(UserTodoListRepository userTodoListRepository,
-                           UserTodoVideoRepository userTodoVideoRepository, UserTodoQuizRepository userTodoQuizRepository) {
-        this.userTodoListRepository = userTodoListRepository;
-        this.userTodoVideoRepository = userTodoVideoRepository;
-        this.userTodoQuizRepository = userTodoQuizRepository;
+    public TodoListService(TodoListRepository todoListRepository) {
+        this.todoListRepository = todoListRepository;
     }
 
-    public ApiResponse<List<TodoListDTO>> getTodoListByUser(Long userId){
-        List<UserTodoList> userTodoLists = userTodoListRepository.findByUsers_UsersId(userId);
-        List<TodoListDTO> userTodoListDTOs = userTodoLists.stream()
-                .map(userTodoList -> new TodoListDTO(userTodoList.getUserTodoListId(), userTodoList.getName(), userTodoList.getDescription()))
+    public Optional<TodoListAllDTO> getTodoListById(Long todoListId) {
+        return todoListRepository.findById(todoListId).map(this::convertToTodoListAllDTO);
+    }
+    public ApiResponse<List<TodoListAllDTO>> getTodoList(){
+        List<TodoListAllDTO> todoListAllDTOS = todoListRepository.findAll().stream()
+                .map(todoList -> new TodoListAllDTO(
+                        todoList.getTodoListId(),
+                        todoList.getName(),
+                        todoList.getDescription(),
+                        todoList.getTodoVideos(),
+                        todoList.getTodoQuizzes()))
                 .collect(Collectors.toList());
-        return ApiResponse.success(SuccessMessage.USER_TODO_LIST_GET_SUCCESS, userTodoListDTOs);
+        return ApiResponse.success(SuccessMessage.TODO_LIST_GET_SUCCESS,todoListAllDTOS);
     }
 
-    public ApiResponse<UserTodoList> getTodoList(Long userId, Long listId){
-        UserTodoList userTodoList = userTodoListRepository.findById(listId).get();
-        return ApiResponse.success(SuccessMessage.USER_TODO_LIST_GET_SUCCESS, userTodoList);
+    private TodoListAllDTO convertToTodoListAllDTO(TodoList todoList) {
+        TodoListAllDTO dto = new TodoListAllDTO();
+        dto.setTodoListId(todoList.getTodoListId());
+        dto.setName(todoList.getName());
+        dto.setDescription(todoList.getDescription());
+        dto.setTodoVideos(todoList.getTodoVideos());
+        dto.setTodoQuizzes(todoList.getTodoQuizzes());
+        return dto;
     }
-
-    public ApiResponse<UserTodoList> updateTodoList(Long userId, Long listId, TodoListUpdateDTO todoListUpdateDTO){
-        if(!userTodoListRepository.existsById(listId)){
-            return ApiResponse.error(ErrorMessage.NOT_FOUND_LIST_EXCEPTION, "리스트가 존재하지 않습니다");
-        }
-
-        if(todoListUpdateDTO.getQuizVideo()==Boolean.TRUE){
-            if(!userTodoQuizRepository.existsById(todoListUpdateDTO.getId())){
-                return ApiResponse.error(ErrorMessage.NOT_FOUND_QUIZ_EXCEPTION, "퀴즈가 존재하지 않습니다.");
-            }
-            UserTodoQuiz userTodoQuiz = userTodoQuizRepository.findById(todoListUpdateDTO.getId()).get();
-            userTodoQuiz.setStage(todoListUpdateDTO.getArrival());
-            userTodoQuizRepository.save(userTodoQuiz);
-        }
-        else{
-            if(!userTodoVideoRepository.existsById(todoListUpdateDTO.getId())){
-                return ApiResponse.error(ErrorMessage.VIDEO_NOT_FOUND, "퀴즈가 존재하지 않습니다.");
-            }
-            UserTodoVideo userTodoVideo = userTodoVideoRepository.findById(todoListUpdateDTO.getId()).get();
-            userTodoVideo.setStage(todoListUpdateDTO.getArrival());
-            userTodoVideoRepository.save(userTodoVideo);
-        }
-        return ApiResponse.success(SuccessMessage.USER_TODO_LIST_UPDATE_SUCCESS, userTodoListRepository.findById(listId).get());
+    public ApiResponse<Optional<TodoListAllDTO>> getTodoListbyId(Long listId){
+        return ApiResponse.success(SuccessMessage.TODO_LIST_GET_BY_ID_SUCCESS,todoListRepository.findById(listId).map(this::convertToTodoListAllDTO));
     }
 }
