@@ -15,6 +15,7 @@ public class UserTodoListByIdDTO {
     private Long userTodoListId;
     private String name;
     private String description;
+    private Long progress;
     private List<UserTodoVideoDTO> userTodoVideos;
     private List<UserTodoQuizDTO> userTodoQuizzes;
 }
