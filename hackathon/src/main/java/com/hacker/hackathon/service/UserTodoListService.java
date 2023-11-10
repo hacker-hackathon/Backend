@@ -198,4 +198,48 @@ public class UserTodoListService {
         return ApiResponse.success(SuccessMessage.MAKE_NEW_USER_TODO_LIST_SUCCESS, newUserTodoListDTO);
     }
 
+    public ApiResponse<ListByStageDTO> getListByStage(Long listId, Long stageId){
+        if(!userTodoListRepository.existsById(listId)){
+            return ApiResponse.error(ErrorMessage.NOT_FOUND_LIST_EXCEPTION, "리스트없음");
+        }
+        UserTodoList userTodoList = userTodoListRepository.findById(listId).get();
+        ListByStageDTO listByStageDTO = new ListByStageDTO();
+        listByStageDTO.setStageId(stageId);
+        listByStageDTO.setUsersId(userTodoList.getUsers().getUsersId());
+        listByStageDTO.setUserTodoListName(userTodoList.getName());
+        listByStageDTO.setDescription(userTodoList.getDescription());
+
+        Set<ListByStageVideoDTO> listByStageVideoDTOs = userTodoList.getUserTodoVideos().stream()
+                .filter(userTodoVideo -> userTodoVideo.getStage().equals(stageId))
+                .map(userTodoVideo -> {
+                    ListByStageVideoDTO dto = new ListByStageVideoDTO();
+                    Video video = userTodoVideo.getVideo();
+                    dto.setCreator(video.getCreator());
+                    dto.setLink(video.getLink());
+                    dto.setTitle(video.getTitle());
+                    dto.setUserTodoVideoId(userTodoVideo.getUserTodoVideoId());
+                    //I need this part
+                    Set<Quiz> videoQuizzes = video.getQuizzes();
+                    Set<UserTodoQuizzesDTO> userTodoQuizzesDTOs = userTodoList.getUserTodoQuizzes().stream()
+                            .filter(userTodoQuiz -> videoQuizzes.contains(userTodoQuiz.getQuiz()))
+                            .map(userTodoQuiz -> {
+                                UserTodoQuizzesDTO quizDTO = new UserTodoQuizzesDTO();
+                                quizDTO.setQuizId(userTodoQuiz.getQuiz().getQuizId());
+                                quizDTO.setUserTodoQuizId(userTodoQuiz.getUserTodoQuizId());
+                                quizDTO.setQuestion(userTodoQuiz.getQuiz().getQuestion());
+                                quizDTO.setAnswer(userTodoQuiz.getQuiz().getAnswer());
+                                quizDTO.setPreviousAnswer(userTodoQuiz.getPreviousAnswer());
+                                return quizDTO;
+                            })
+                            .collect(Collectors.toSet());
+
+                    dto.setUserTodoQuizzesDTOS(userTodoQuizzesDTOs);
+                    return dto;
+                })
+                .collect(Collectors.toSet());
+
+        listByStageDTO.setListByStageVideoDTOS(listByStageVideoDTOs);
+
+        return ApiResponse.success(SuccessMessage.GET_VIDEOS_BY_STAGE_SUCCESS,listByStageDTO);
+    }
 }

@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuizMessageDTO {
-    private Long usersId;
-    private Long quizId;
-    private Boolean message;
+public class ListVideoDTO {
+    private Long listId;
+    private Long videoId;
 }

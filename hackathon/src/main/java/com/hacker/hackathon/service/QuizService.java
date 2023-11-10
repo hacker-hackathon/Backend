@@ -44,7 +44,7 @@ public class QuizService {
         }
 
         List<QuizDTO> quizDTOList = video.getQuizzes().stream()
-                .map(quiz -> new QuizDTO(quiz.getQuizId(), quiz.getQuestion(), quiz.getAnswer()))
+                .map(quiz -> new QuizDTO(quiz.getQuizId(), quiz.getQuestion(), quiz.getAnswer(), quiz.getS3Url()))
                 .collect(Collectors.toList());
 
         VideoQuizDTO videoQuizDTO = new VideoQuizDTO(video.getVideoId(), quizDTOList);
@@ -60,7 +60,7 @@ public class QuizService {
             return ApiResponse.error(ErrorMessage.NOT_FOUND_QUIZ_EXCEPTION, "No quiz found with the given ID.");
         }
 
-        QuizDTO quizDTO = new QuizDTO(quiz.getQuizId(), quiz.getQuestion(), quiz.getAnswer());
+        QuizDTO quizDTO = new QuizDTO(quiz.getQuizId(), quiz.getQuestion(), quiz.getAnswer(), quiz.getS3Url());
 
         return ApiResponse.success(SuccessMessage.GET_QUIZ_SUCCESS, quizDTO);
 
@@ -88,6 +88,8 @@ public class QuizService {
         dto.setPreviousAnswer(userTodoQuiz.getPreviousAnswer());
         dto.setCompleteAt(userTodoQuiz.getCompleteAt());
         dto.setQuizId(userTodoQuiz.getQuiz().getQuizId());
+        dto.setQuestion(userTodoQuiz.getQuiz().getQuestion());
+        dto.setS3Url(userTodoQuiz.getQuiz().getS3Url());
 
         return dto;
     }
@@ -121,14 +123,14 @@ public class QuizService {
         }
         UserTodoQuiz userTodoQuiz = userTodoQuizOptional.get();
 
-        userTodoQuiz.setStage(isCorrect ? 4L : 1L);
+        userTodoQuiz.setStage(isCorrect ? 4L : 2L);
         userTodoQuiz.setPreviousAnswer(isCorrect);
 
         userTodoQuizRepository.save(userTodoQuiz);
         logger.info(String.valueOf(userTodoQuiz.getCompletedAt()));
 
         QuizMessageDTO quizMessageDTO = new QuizMessageDTO();
-        quizMessageDTO.setMessage(isCorrect ? "Correct answer!" : "Incorrect answer.");
+        quizMessageDTO.setMessage(isCorrect ? Boolean.TRUE : Boolean.FALSE);
         quizMessageDTO.setQuizId(quizId);
         quizMessageDTO.setUsersId(userId);
 

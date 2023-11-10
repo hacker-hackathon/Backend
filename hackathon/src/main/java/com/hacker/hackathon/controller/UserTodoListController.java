@@ -41,4 +41,9 @@ public class UserTodoListController {
     public ApiResponse<NewUserTodoListDTO> newTodoList(@PathVariable Long userId, @PathVariable Long listId){
         return userTodoListService.newTodoList(userId, listId);
     }
+
+    @GetMapping("/list/{listId}/{stage}")
+    public ApiResponse<ListByStageDTO> getListByStage(@PathVariable Long listId, @PathVariable Long stage){
+        return userTodoListService.getListByStage(listId, stage);
+    }
 }

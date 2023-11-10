@@ -13,4 +13,5 @@ public class QuizDTO {
     private Long quizId;
     private String question;
     private Boolean answer;
+    private String s3Url;
 }
