@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TodoListUpdateDTO {
-    private Boolean quizVideo;
-    private Long id;
+    private String id;
     private Long arrival;
 }

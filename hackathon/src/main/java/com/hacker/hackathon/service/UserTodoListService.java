@@ -23,14 +23,16 @@ public class UserTodoListService {
     private final UserTodoQuizRepository userTodoQuizRepository;
     private final UsersRepository usersRepository;
     private final TodoListRepository todoListRepository;
+    private final VideoRepository videoRepository;
 
     public UserTodoListService(UserTodoListRepository userTodoListRepository,
-                               UserTodoVideoRepository userTodoVideoRepository, UserTodoQuizRepository userTodoQuizRepository, UsersRepository usersRepository, TodoListRepository todoListRepository) {
+                               UserTodoVideoRepository userTodoVideoRepository, UserTodoQuizRepository userTodoQuizRepository, UsersRepository usersRepository, TodoListRepository todoListRepository, VideoRepository videoRepository) {
         this.userTodoListRepository = userTodoListRepository;
         this.userTodoVideoRepository = userTodoVideoRepository;
         this.userTodoQuizRepository = userTodoQuizRepository;
         this.usersRepository = usersRepository;
         this.todoListRepository = todoListRepository;
+        this.videoRepository = videoRepository;
     }
 
     public ApiResponse<List<UserTodoListDTO>> getTodoListByUser(Long userId) {
@@ -102,27 +104,18 @@ public class UserTodoListService {
         return ApiResponse.success(SuccessMessage.USER_TODO_LIST_GET_SUCCESS, dto);
     }
 
-    public ApiResponse<UserTodoList> updateTodoList(Long userId, Long listId, TodoListUpdateDTO todoListUpdateDTO){
-        if(!userTodoListRepository.existsById(listId)){
+    public ApiResponse<UserTodoList> updateTodoList(Long listId, TodoListUpdateDTO todoListUpdateDTO) {
+        if (!userTodoListRepository.existsById(listId)) {
             return ApiResponse.error(ErrorMessage.NOT_FOUND_LIST_EXCEPTION, "리스트가 존재하지 않습니다");
         }
+        if (!videoRepository.existsByTitle(todoListUpdateDTO.getId())) {
+            return ApiResponse.error(ErrorMessage.VIDEO_NOT_FOUND, "퀴즈가 존재하지 않습니다.");
+        }
+        Video video = videoRepository.findByTitle(todoListUpdateDTO.getId()).get();
+        UserTodoVideo userTodoVideo = userTodoVideoRepository.findByVideo_VideoId(video.getVideoId()).get();
+        userTodoVideo.setStage(todoListUpdateDTO.getArrival());
+        userTodoVideoRepository.save(userTodoVideo);
 
-        if(todoListUpdateDTO.getQuizVideo()==Boolean.TRUE){
-            if(!userTodoQuizRepository.existsById(todoListUpdateDTO.getId())){
-                return ApiResponse.error(ErrorMessage.NOT_FOUND_QUIZ_EXCEPTION, "퀴즈가 존재하지 않습니다.");
-            }
-            UserTodoQuiz userTodoQuiz = userTodoQuizRepository.findById(todoListUpdateDTO.getId()).get();
-            userTodoQuiz.setStage(todoListUpdateDTO.getArrival());
-            userTodoQuizRepository.save(userTodoQuiz);
-        }
-        else{
-            if(!userTodoVideoRepository.existsById(todoListUpdateDTO.getId())){
-                return ApiResponse.error(ErrorMessage.VIDEO_NOT_FOUND, "퀴즈가 존재하지 않습니다.");
-            }
-            UserTodoVideo userTodoVideo = userTodoVideoRepository.findById(todoListUpdateDTO.getId()).get();
-            userTodoVideo.setStage(todoListUpdateDTO.getArrival());
-            userTodoVideoRepository.save(userTodoVideo);
-        }
         return ApiResponse.success(SuccessMessage.USER_TODO_LIST_UPDATE_SUCCESS, userTodoListRepository.findById(listId).get());
     }
 
