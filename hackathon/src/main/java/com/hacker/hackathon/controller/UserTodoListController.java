@@ -27,9 +27,9 @@ public class UserTodoListController {
         return userTodoListService.getTodoList(userId, listId);
     }
 
-    @PutMapping("/user/{userId}/list/{listId}")
-    public ApiResponse<UserTodoList> updateTodoList(@PathVariable Long userId, @PathVariable Long listId, @ModelAttribute TodoListUpdateDTO todoListUpdateDTO){
-        return userTodoListService.updateTodoList(userId, listId, todoListUpdateDTO);
+    @PutMapping("/list/{listId}")
+    public ApiResponse<UserTodoList> updateTodoList(@PathVariable Long listId, @RequestBody TodoListUpdateDTO todoListUpdateDTO){
+        return userTodoListService.updateTodoList(listId, todoListUpdateDTO);
     }
 
     @DeleteMapping("/user/{userId}/list/{listId}")
@@ -40,5 +40,10 @@ public class UserTodoListController {
     @PostMapping("/user/{userId}/list/{listId}")
     public ApiResponse<NewUserTodoListDTO> newTodoList(@PathVariable Long userId, @PathVariable Long listId){
         return userTodoListService.newTodoList(userId, listId);
+    }
+
+    @GetMapping("/list/{listId}/{stage}")
+    public ApiResponse<ListByStageDTO> getListByStage(@PathVariable Long listId, @PathVariable Long stage){
+        return userTodoListService.getListByStage(listId, stage);
     }
 }

@@ -83,7 +83,7 @@ public enum SuccessMessage {
     /**
      * todolist
      */
-
+    GET_VIDEOS_BY_STAGE_SUCCESS(OK,"스테이지별 동영상 가져오기 성공"),
     USER_TODO_LIST_GET_SUCCESS(OK, "유저별 투두리스트 가져오기 성공"),
     TODO_LIST_GET_SUCCESS(OK,"투두리스트 전체 반환 성공."),
 

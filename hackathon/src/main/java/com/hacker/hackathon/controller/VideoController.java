@@ -17,7 +17,7 @@ public class VideoController {
         this.videoService = videoService;
     }
 
-    @PostMapping("/video")
+    @PostMapping("/quiz")
     public ApiResponse<Video>  uploadVideo(@RequestParam String link){
         return videoService.uploadVideo(link);
     }

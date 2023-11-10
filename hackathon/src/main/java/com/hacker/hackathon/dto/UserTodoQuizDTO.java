@@ -14,7 +14,9 @@ import java.util.Date;
 public class UserTodoQuizDTO {
     private Long userTodoQuizId;
     private Long stage;
+    private String question;
     private Boolean previousAnswer;
+    private String s3Url;
     private Date completeAt;
     private Date completedAt;
     private Long quizId;

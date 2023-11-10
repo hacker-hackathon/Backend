@@ -25,6 +25,8 @@ public class Quiz {
     @Column
     private Boolean answer;
 
+    @Column
+    private String s3Url;
 
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
