@@ -67,6 +67,7 @@ public enum ErrorMessage {
      * todolist
      */
     NOT_FOUND_LIST_EXCEPTION(NOT_FOUND, "리스트가 존재하지 않습니다"),
+    LIST_ALREADY_EXISTS(FORBIDDEN, "이미 리스트가 존재합니다"),
     /**
      * translation
      */
