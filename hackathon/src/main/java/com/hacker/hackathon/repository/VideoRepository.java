@@ -3,6 +3,7 @@ package com.hacker.hackathon.repository;
 import com.hacker.hackathon.model.Quiz;
 import com.hacker.hackathon.model.Video;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.Optional;
@@ -14,5 +15,6 @@ public interface VideoRepository extends JpaRepository<Video,Long> {
 
     boolean existsByTitle(String id);
 
+    @Query("SELECT v FROM Video v WHERE v.title = ?1")
     Optional<Video> findByTitle(String id);
 }

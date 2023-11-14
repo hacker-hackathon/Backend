@@ -29,9 +29,31 @@ dependencies {
     //javax
     compileOnly 'javax.servlet:javax.servlet-api:3.0.1'
 
-    //webmvc
+    //jwt
+    // Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.79.Final:osx-aarch_64'
+
+    // JWT
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+//webmvc
+
     // Http
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    //parserbuilder
+    // Jackson Core
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.1'
+
+    // Jackson Databind
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
+
+    // Jackson Annotations
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.1'
+
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
 }
 
 tasks.named('test') {

@@ -9,4 +9,6 @@ import java.util.List;
 @RepositoryRestResource
 public interface UserTodoListRepository extends JpaRepository<UserTodoList,Long> {
     List<UserTodoList> findByUsers_UsersId(Long userId);
+
+    boolean existsByUsers_UsersIdAndTodoList_TodoListId(Long usersId, Long listId);
 }
