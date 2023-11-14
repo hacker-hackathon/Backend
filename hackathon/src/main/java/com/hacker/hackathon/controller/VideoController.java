@@ -1,6 +1,7 @@
 package com.hacker.hackathon.controller;
 
 import com.hacker.hackathon.common.response.ApiResponse;
+import com.hacker.hackathon.config.resolver.UserId;
 import com.hacker.hackathon.dto.VideoViewDTO;
 import com.hacker.hackathon.model.UserTodoVideo;
 import com.hacker.hackathon.model.UserVideo;
@@ -27,13 +28,13 @@ public class VideoController {
         return videoService.getVideo(videoId);
     }
 
-    @PostMapping("/user/{userId}/video/{videoId}")
-    public ApiResponse<VideoViewDTO> viewVideo(@PathVariable Long userId, @PathVariable Long videoId){
+    @PostMapping("/video/{videoId}")
+    public ApiResponse<VideoViewDTO> viewVideo(@UserId Long userId, @PathVariable Long videoId){
         return videoService.viewVideo(userId, videoId);
     }
 
-    @GetMapping("/user/{userId}/video/{videoId}")
-    public ApiResponse<UserTodoVideo> getVideoByUserId(@PathVariable Long userId, @PathVariable Long videoId){
+    @GetMapping("/user/video/{videoId}")
+    public ApiResponse<UserTodoVideo> getVideoByUserId(@UserId Long userId, @PathVariable Long videoId){
         return videoService.getVideoByUserId(userId, videoId);
     }
 }

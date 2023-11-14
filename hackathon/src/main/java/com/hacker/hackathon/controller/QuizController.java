@@ -1,6 +1,7 @@
 package com.hacker.hackathon.controller;
 
 import com.hacker.hackathon.common.response.ApiResponse;
+import com.hacker.hackathon.config.resolver.UserId;
 import com.hacker.hackathon.dto.*;
 import com.hacker.hackathon.service.QuizService;
 import lombok.Getter;
@@ -27,18 +28,18 @@ public class QuizController {
         return quizService.getQuizById(quizId);
     }
 
-    @GetMapping("/user/{userId}/video/{videoId}/quiz")
-    public ApiResponse<UserQuizDTO> getQuizByUserIdAndVideoId(@PathVariable Long userId, @PathVariable Long videoId){
+    @GetMapping("/user/video/{videoId}/quiz")
+    public ApiResponse<UserQuizDTO> getQuizByUserIdAndVideoId(@UserId Long userId, @PathVariable Long videoId){
         return quizService.getQuizByUserIdAndVideoId(userId, videoId);
     }
 
-    @GetMapping("/user/{userId}/quiz/{quizId}")
-    public ApiResponse<UserTodoQuizDTO> getQuizByUserIdAndQuizId(@PathVariable Long userId, @PathVariable Long quizId){
+    @GetMapping("/user/quiz/{quizId}")
+    public ApiResponse<UserTodoQuizDTO> getQuizByUserIdAndQuizId(@UserId Long userId, @PathVariable Long quizId){
         return quizService.getQuizByUserIdAndQuizId(userId, quizId);
     }
 
-    @PostMapping("/user/{userId}/quiz/{quizId}/{answer}")
-    public ApiResponse<QuizMessageDTO> solveQuiz(@PathVariable Long userId, @PathVariable Long quizId, @PathVariable Long answer){
+    @PostMapping("/quiz/{quizId}/{answer}")
+    public ApiResponse<QuizMessageDTO> solveQuiz(@UserId Long userId, @PathVariable Long quizId, @PathVariable Long answer){
         return quizService.solveQuiz(userId, quizId, answer);
     }
 }
